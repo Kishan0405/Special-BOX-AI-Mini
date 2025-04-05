@@ -45,7 +45,7 @@
         </div>
 
         <iframe src="https://special-box-ai.onrender.com/" frameborder="0" id="chatbot-frame"
-            title="Special Box AI Chat Interface"></iframe>
+            title="Special Box AI Chat Interface" loading="lazy"></iframe>
 
         <!-- Loading Overlay -->
         <div id="chatbot-loading">
@@ -65,121 +65,6 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.getElementById('chatbot-toggle');
-        const frameContainer = document.getElementById('chatbot-frame-container');
-        const minimizeBtn = document.getElementById('chatbot-minimize');
-        const closeBtn = document.getElementById('chatbot-close');
-        const refreshBtn = document.getElementById('chatbot-refresh');
-        const loadingOverlay = document.getElementById('chatbot-loading');
-        const fallbackMessage = document.getElementById('chatbot-fallback');
-        const retryButton = document.getElementById('retry-connection');
-        const chatbotFrame = document.getElementById('chatbot-frame');
-        const chatBadge = document.querySelector('.chatbot-badge');
-
-        let hasInteracted = false;
-
-        function openChat() {
-            frameContainer.classList.remove('hidden');
-            void frameContainer.offsetWidth;
-            frameContainer.classList.add('visible');
-            loadingOverlay.classList.add('visible');
-
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-                const iframeLoaded = Math.random() > 0.1;
-                if (!iframeLoaded) {
-                    fallbackMessage.classList.remove('hidden');
-                }
-            }, 1500);
-
-            chatBadge.classList.remove('show');
-            hasInteracted = true;
-        }
-
-        function closeChat() {
-            frameContainer.classList.remove('visible');
-            setTimeout(() => {
-                frameContainer.classList.add('hidden');
-                fallbackMessage.classList.add('hidden');
-            }, 300);
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            if (frameContainer.classList.contains('visible')) {
-                closeChat();
-            } else {
-                openChat();
-            }
-        });
-
-        minimizeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            frameContainer.classList.toggle('minimized');
-            const icon = minimizeBtn.querySelector('i');
-            if (frameContainer.classList.contains('minimized')) {
-                icon.classList.remove('fa-minus');
-                icon.classList.add('fa-expand');
-            } else {
-                icon.classList.remove('fa-expand');
-                icon.classList.add('fa-minus');
-            }
-        });
-
-        closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeChat();
-        });
-
-        refreshBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            loadingOverlay.classList.add('visible');
-            chatbotFrame.src = chatbotFrame.src;
-            fallbackMessage.classList.add('hidden');
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-            }, 1500);
-        });
-
-        retryButton.addEventListener('click', () => {
-            fallbackMessage.classList.add('hidden');
-            loadingOverlay.classList.add('visible');
-            chatbotFrame.src = chatbotFrame.src;
-            setTimeout(() => {
-                loadingOverlay.classList.remove('visible');
-                const retrySuccess = Math.random() > 0.3;
-                if (!retrySuccess) {
-                    fallbackMessage.classList.remove('hidden');
-                }
-            }, 2000);
-        });
-
-        window.addEventListener('message', (event) => {
-            if (event.origin === 'https://special-box-ai.onrender.com') {
-                if (event.data.type === 'botReady') {
-                    console.log('Bot is ready to receive messages');
-                }
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            const isClickInsideChat = frameContainer.contains(e.target);
-            const isClickOnToggle = toggleBtn.contains(e.target);
-            if (frameContainer.classList.contains('visible') && !isClickInsideChat && !isClickOnToggle) {
-                // Uncomment to enable closing on outside click
-                // closeChat();
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && frameContainer.classList.contains('visible')) {
-                closeChat();
-            }
-        });
-    });
-</script>
-
 <style>
     /* Chatbot Container Styles */
     #chatbot-container {
@@ -190,7 +75,7 @@
         font-family: 'Poppins', sans-serif;
     }
 
-    /* Pulse Animation */
+    /* Pulse Animation - Optimized for performance */
     .pulse-animation {
         position: absolute;
         bottom: 0;
@@ -201,6 +86,7 @@
         background-color: rgba(0, 123, 255, 0.4);
         animation: pulse 2s infinite;
         pointer-events: none;
+        will-change: transform, opacity;
     }
 
     @keyframes pulse {
@@ -231,14 +117,15 @@
         font-size: 24px;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
         position: relative;
         z-index: 10000;
         overflow: hidden;
+        will-change: transform;
     }
 
     #chatbot-toggle:hover {
-        transform: scale(1.1);
+        transform: scale(1.05);
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         background-color: #0069d9;
     }
@@ -260,10 +147,11 @@
         font-size: 14px;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.2s ease, transform 0.2s ease;
         white-space: nowrap;
         width: max-content;
         transform: translateY(-50%) translateX(10px);
+        z-index: 10001;
     }
 
     #chatbot-toggle:hover .chatbot-tooltip {
@@ -288,6 +176,7 @@
         transform-origin: bottom right;
         opacity: 0;
         transform: scale(0.8);
+        will-change: transform, opacity;
     }
 
     #chatbot-frame-container.hidden {
@@ -314,6 +203,7 @@
         color: white;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
+        user-select: none;
     }
 
     .chatbot-header-info {
@@ -332,6 +222,7 @@
         justify-content: center;
         color: #007BFF;
         font-size: 20px;
+        flex-shrink: 0;
     }
 
     .chatbot-status h3 {
@@ -400,63 +291,6 @@
         transform: scale(0.95);
     }
 
-    /* Quick Actions Bar */
-    .quick-actions {
-        display: flex;
-        gap: 8px;
-        padding: 12px;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
-        overflow-x: auto;
-        scrollbar-width: thin;
-        white-space: nowrap;
-    }
-
-    .quick-actions::-webkit-scrollbar {
-        height: 5px;
-    }
-
-    .quick-actions::-webkit-scrollbar-thumb {
-        background-color: #cbd5e0;
-        border-radius: 10px;
-    }
-
-    .quick-action-btn {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 12px;
-        border-radius: 16px;
-        border: 1px solid #e2e8f0;
-        background-color: white;
-        color: #4a5568;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-    }
-
-    .quick-action-btn i {
-        margin-right: 6px;
-        font-size: 14px;
-        color: #007BFF;
-    }
-
-    .quick-action-btn:hover {
-        background-color: #f1f5f9;
-        transform: translateY(-2px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .quick-action-btn:active {
-        transform: translateY(0);
-    }
-
-    .quick-action-btn.active {
-        background-color: #e6f3ff;
-        border-color: #007BFF;
-        color: #007BFF;
-    }
-
     /* Iframe Styles */
     #chatbot-frame {
         flex: 1;
@@ -464,12 +298,6 @@
         height: 100%;
         border: none;
         background-color: white;
-    }
-
-    /* Animation for minimize/maximize */
-    #chatbot-frame-container.minimized #chatbot-frame,
-    #chatbot-frame-container.minimized .quick-actions {
-        display: none;
     }
 
     /* Loading Overlay */
@@ -503,6 +331,7 @@
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin-bottom: 10px;
+        will-change: transform;
     }
 
     @keyframes spin {
@@ -577,25 +406,13 @@
         background-color: #0069d9;
     }
 
-    /* Custom Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translate3d(0, 20px, 0);
-        }
-
-        to {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-        }
-    }
-
     /* Responsive Adjustments */
     @media (max-width: 480px) {
         #chatbot-frame-container {
             width: calc(100vw - 40px);
             right: 0;
             max-height: 80vh;
+            bottom: 70px;
         }
 
         .chatbot-tooltip {
@@ -610,31 +427,11 @@
         }
     }
 
-    /* Dark Mode Support (optional) */
+    /* Dark Mode Support (optimized) */
     @media (prefers-color-scheme: dark) {
         #chatbot-frame-container {
             background-color: #1a202c;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .quick-actions {
-            background-color: #2d3748;
-            border-color: #4a5568;
-        }
-
-        .quick-action-btn {
-            background-color: #2d3748;
-            border-color: #4a5568;
-            color: #e2e8f0;
-        }
-
-        .quick-action-btn:hover {
-            background-color: #4a5568;
-        }
-
-        .quick-action-btn.active {
-            background-color: rgba(0, 123, 255, 0.2);
-            border-color: #007BFF;
         }
 
         #chatbot-loading {
@@ -657,4 +454,219 @@
             color: #cbd5e0;
         }
     }
+
+    /* Extra Small Mobile Devices (≤ 360px) */
+    @media (max-width: 360px) {
+        #chatbot-frame-container {
+            width: 100vw;
+            height: 70vh;
+            bottom: 70px;
+            right: 0;
+            border-radius: 0;
+        }
+
+        #chatbot-toggle {
+            width: 56px;
+            height: 56px;
+            font-size: 22px;
+        }
+
+        .chatbot-header h3 {
+            font-size: 14px;
+        }
+
+        .chatbot-tooltip {
+            display: none;
+        }
+
+        .fallback-content p {
+            font-size: 12px;
+        }
+
+        #retry-connection {
+            font-size: 13px;
+            padding: 6px 12px;
+        }
+    }
+
+    /* Small Mobile (361px to 480px) */
+    @media (min-width: 361px) and (max-width: 480px) {
+        #chatbot-frame-container {
+            width: 95vw;
+            height: 75vh;
+            bottom: 70px;
+            right: 10px;
+            border-radius: 12px;
+        }
+
+        #chatbot-toggle {
+            width: 58px;
+            height: 58px;
+        }
+
+        .chatbot-tooltip {
+            display: none;
+        }
+    }
+
+    /* Medium Mobile to Tablets (481px to 768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+        #chatbot-frame-container {
+            width: 320px;
+            height: 500px;
+        }
+
+        .chatbot-tooltip {
+            right: 65px;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Cache DOM elements
+        const toggleBtn = document.getElementById('chatbot-toggle');
+        const frameContainer = document.getElementById('chatbot-frame-container');
+        const minimizeBtn = document.getElementById('chatbot-minimize');
+        const closeBtn = document.getElementById('chatbot-close');
+        const refreshBtn = document.getElementById('chatbot-refresh');
+        const loadingOverlay = document.getElementById('chatbot-loading');
+        const fallbackMessage = document.getElementById('chatbot-fallback');
+        const retryButton = document.getElementById('retry-connection');
+        const chatbotFrame = document.getElementById('chatbot-frame');
+
+        // Set up lazy loading for iframe
+        let iframeLoaded = false;
+
+        // Connection timeout settings
+        const connectionTimeout = 5000; // 5 seconds
+        let connectionTimer;
+
+        function openChat() {
+            frameContainer.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                frameContainer.classList.add('visible');
+                loadingOverlay.classList.add('visible');
+            });
+
+            // Load iframe content only on first open
+            if (!iframeLoaded) {
+                chatbotFrame.src = "https://special-box-ai.onrender.com/";
+                iframeLoaded = true;
+
+                // Set connection timeout
+                connectionTimer = setTimeout(() => {
+                    loadingOverlay.classList.remove('visible');
+                    fallbackMessage.classList.remove('hidden');
+                }, connectionTimeout);
+            } else {
+                // If already loaded, just show briefly
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('visible');
+                }, 500);
+            }
+        }
+
+        function closeChat() {
+            frameContainer.classList.remove('visible');
+            setTimeout(() => {
+                frameContainer.classList.add('hidden');
+                fallbackMessage.classList.add('hidden');
+            }, 300);
+        }
+
+        // Event listeners with debounce protection
+        let isProcessing = false;
+
+        toggleBtn.addEventListener('click', () => {
+            if (isProcessing) return;
+            isProcessing = true;
+
+            if (frameContainer.classList.contains('visible')) {
+                closeChat();
+            } else {
+                openChat();
+            }
+
+            setTimeout(() => { isProcessing = false; }, 500);
+        });
+
+        minimizeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            frameContainer.classList.toggle('minimized');
+            const icon = minimizeBtn.querySelector('i');
+            if (frameContainer.classList.contains('minimized')) {
+                icon.classList.remove('fa-minus');
+                icon.classList.add('fa-expand');
+            } else {
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-minus');
+            }
+        });
+
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeChat();
+        });
+
+        refreshBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            loadingOverlay.classList.add('visible');
+            chatbotFrame.src = chatbotFrame.src;
+            fallbackMessage.classList.add('hidden');
+
+            clearTimeout(connectionTimer);
+            connectionTimer = setTimeout(() => {
+                loadingOverlay.classList.remove('visible');
+            }, 1500);
+        });
+
+        retryButton.addEventListener('click', () => {
+            fallbackMessage.classList.add('hidden');
+            loadingOverlay.classList.add('visible');
+            chatbotFrame.src = chatbotFrame.src;
+
+            clearTimeout(connectionTimer);
+            connectionTimer = setTimeout(() => {
+                loadingOverlay.classList.remove('visible');
+                // 80% success rate on retry
+                if (Math.random() > 0.2) {
+                    // Success
+                } else {
+                    fallbackMessage.classList.remove('hidden');
+                }
+            }, 2000);
+        });
+
+        // Handle iframe load event
+        chatbotFrame.addEventListener('load', () => {
+            clearTimeout(connectionTimer);
+            setTimeout(() => {
+                loadingOverlay.classList.remove('visible');
+            }, 500);
+        });
+
+        // Handle iframe error
+        chatbotFrame.addEventListener('error', () => {
+            clearTimeout(connectionTimer);
+            loadingOverlay.classList.remove('visible');
+            fallbackMessage.classList.remove('hidden');
+        });
+
+        // Handle message events from iframe
+        window.addEventListener('message', (event) => {
+            if (event.origin === 'https://special-box-ai.onrender.com') {
+                if (event.data.type === 'botReady') {
+                    loadingOverlay.classList.remove('visible');
+                }
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && frameContainer.classList.contains('visible')) {
+                closeChat();
+            }
+        });
+    });
+</script>
