@@ -15,7 +15,6 @@
     <button id="chatbot-toggle" aria-label="Toggle chatbot">
         <i class="fas fa-comments"></i>
         <span class="chatbot-tooltip">Ask Special Box AI</span>
-        <span class="chatbot-badge">1</span>
     </button>
 
     <div id="chatbot-frame-container">
@@ -64,17 +63,6 @@
             </div>
         </div>
     </div>
-
-    <div class="chatbot-notification" id="chatbot-notification">
-        <div class="notification-title">
-            <i class="fas fa-bell"></i> New Message
-        </div>
-        <span>Hi there! Ask me anything about Abhijna's skills and projects.</span>
-        <div class="notification-actions">
-            <button id="notification-open">Open Chat</button>
-            <button id="notification-dismiss">Dismiss</button>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -84,9 +72,6 @@
         const minimizeBtn = document.getElementById('chatbot-minimize');
         const closeBtn = document.getElementById('chatbot-close');
         const refreshBtn = document.getElementById('chatbot-refresh');
-        const notification = document.getElementById('chatbot-notification');
-        const notificationOpen = document.getElementById('notification-open');
-        const notificationDismiss = document.getElementById('notification-dismiss');
         const loadingOverlay = document.getElementById('chatbot-loading');
         const fallbackMessage = document.getElementById('chatbot-fallback');
         const retryButton = document.getElementById('retry-connection');
@@ -99,7 +84,6 @@
             frameContainer.classList.remove('hidden');
             void frameContainer.offsetWidth;
             frameContainer.classList.add('visible');
-            notification.classList.remove('show');
             loadingOverlay.classList.add('visible');
 
             setTimeout(() => {
@@ -121,19 +105,6 @@
                 fallbackMessage.classList.add('hidden');
             }, 300);
         }
-
-        setTimeout(() => {
-            if (!hasInteracted) {
-                notification.classList.add('show');
-                chatBadge.classList.add('show');
-            }
-        }, 5000);
-
-        setTimeout(() => {
-            if (notification.classList.contains('show')) {
-                notification.classList.remove('show');
-            }
-        }, 20000);
 
         toggleBtn.addEventListener('click', () => {
             if (frameContainer.classList.contains('visible')) {
@@ -169,14 +140,6 @@
             setTimeout(() => {
                 loadingOverlay.classList.remove('visible');
             }, 1500);
-        });
-
-        notificationOpen.addEventListener('click', () => {
-            openChat();
-        });
-
-        notificationDismiss.addEventListener('click', () => {
-            notification.classList.remove('show');
         });
 
         retryButton.addEventListener('click', () => {
@@ -282,30 +245,6 @@
 
     #chatbot-toggle:active {
         transform: scale(0.95);
-    }
-
-    /* Badge notification on chat button */
-    .chatbot-badge {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: #ff4757;
-        color: white;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transform: scale(0);
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
-    }
-
-    .chatbot-badge.show {
-        opacity: 1;
-        transform: scale(1);
     }
 
     /* Tooltip for the chat button */
@@ -638,90 +577,6 @@
         background-color: #0069d9;
     }
 
-    /* Notification Bubble */
-    .chatbot-notification {
-        position: absolute;
-        right: 70px;
-        bottom: 20px;
-        background-color: white;
-        color: #333;
-        padding: 0;
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        font-size: 14px;
-        max-width: 280px;
-        opacity: 0;
-        transform: translateX(20px);
-        transition: all 0.3s ease;
-        pointer-events: none;
-        overflow: hidden;
-    }
-
-    .notification-title {
-        background-color: #007BFF;
-        color: white;
-        padding: 10px 16px;
-        font-weight: 500;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .chatbot-notification span {
-        display: block;
-        padding: 12px 16px;
-        color: #4a5568;
-        line-height: 1.4;
-    }
-
-    .notification-actions {
-        display: flex;
-        border-top: 1px solid #e9ecef;
-    }
-
-    .notification-actions button {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        transition: background-color 0.2s ease;
-    }
-
-    #notification-open {
-        color: #007BFF;
-        border-right: 1px solid #e9ecef;
-    }
-
-    #notification-dismiss {
-        color: #718096;
-    }
-
-    .notification-actions button:hover {
-        background-color: #f1f5f9;
-    }
-
-    .chatbot-notification:after {
-        content: '';
-        position: absolute;
-        right: -10px;
-        bottom: 20px;
-        width: 0;
-        height: 0;
-        border-left: 10px solid white;
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-    }
-
-    .chatbot-notification.show {
-        opacity: 1;
-        transform: translateX(0);
-        pointer-events: auto;
-    }
-
     /* Custom Animations */
     @keyframes fadeInUp {
         from {
@@ -741,11 +596,6 @@
             width: calc(100vw - 40px);
             right: 0;
             max-height: 80vh;
-        }
-
-        .chatbot-notification {
-            max-width: 220px;
-            right: 70px;
         }
 
         .chatbot-tooltip {
@@ -805,30 +655,6 @@
 
         .fallback-content p {
             color: #cbd5e0;
-        }
-
-        .chatbot-notification {
-            background-color: #2d3748;
-        }
-
-        .chatbot-notification span {
-            color: #e2e8f0;
-        }
-
-        .notification-actions {
-            border-color: #4a5568;
-        }
-
-        #notification-dismiss {
-            color: #cbd5e0;
-        }
-
-        .notification-actions button:hover {
-            background-color: #4a5568;
-        }
-
-        .chatbot-notification:after {
-            border-left-color: #2d3748;
         }
     }
 </style>
